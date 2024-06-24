@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Booking System</title>
+    <style>
+        body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color:lavender;
+}
+
+.container {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+}
+
+h1, h2 {
+    text-align: center;
+    color:blueviolet;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+select, button {
+    padding: 10px 15px;
+    border: 1px solid blueviolet;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+button {
+    background-color: blueviolet;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color:darkviolet;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+li:hover {
+    background-color: #e0f7fa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.booking-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#bookingDetails {
+    background-color: lavender;
+    padding: 20px;
+    border: 1px solid blueviolet;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+#confirmBooking {
+    background-color: blueviolet;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#confirmBooking:hover {
+    background-color: darkviolet;
+}
+
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Travel Booking System</h1>
+        <div class="search-section">
+            <h2>Search</h2>
+            <form id="searchForm">
+                <label for="searchType">Search for:</label>
+                <select id="searchType">
+                    <option value="flights">Flights</option>
+                    <option value="hotels">Hotels</option>
+                    <option value="cars">Rental Cars</option>
+                </select>
+                <div id="flightFields" class="additional-fields">
+                    <label for="flightDestination">Destination:</label>
+                    <input type="text" id="flightDestination" placeholder="Enter destination">
+                    <label for="flightDate">Travel Date:</label>
+                    <input type="date" id="flightDate">
+                    <label for="passengerCount">Passengers:</label>
+                    <input type="number" id="passengerCount" min="1" placeholder="Number of passengers">
+                </div>
+                <div id="hotelFields" class="additional-fields" style="display: none;">
+                    <label for="hotelDestination">Destination:</label>
+                    <input type="text" id="hotelDestination" placeholder="Enter destination">
+                    <label for="checkInDate">Check-in Date:</label>
+                    <input type="date" id="checkInDate">
+                    <label for="checkOutDate">Check-out Date:</label>
+                    <input type="date" id="checkOutDate">
+                    <label for="hotelGuests">Guests:</label>
+                    <input type="number" id="hotelGuests" min="1" placeholder="Number of guests">
+                </div>
+                <div id="carFields" class="additional-fields" style="display: none;">
+                    <label for="carDestination">Destination:</label>
+                    <input type="text" id="carDestination" placeholder="Enter destination">
+                    <label for="carDate">Rental Date:</label>
+                    <input type="date" id="carDate">
+                </div>
+                <button type="submit">Search</button>
+            </form>
+            <ul id="searchResults"></ul>
+        </div>
+        <div class="booking-section" id="bookingSection" style="display: none;">
+            <h2>Booking Details</h2>
+            <div id="bookingDetails"></div>
+            <button id="confirmBooking">Confirm Booking</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    const searchForm = document.getElementById('searchForm');
+    const searchType = document.getElementById('searchType');
+    const searchResults = document.getElementById('searchResults');
+    const bookingSection = document.getElementById('bookingSection');
+    const bookingDetails = document.getElementById('bookingDetails');
+    const confirmBooking = document.getElementById('confirmBooking');
+
+    const flightFields = document.getElementById('flightFields');
+    const hotelFields = document.getElementById('hotelFields');
+    const carFields = document.getElementById('carFields');
+
+    searchType.addEventListener('change', () => {
+        const type = searchType.value;
+        flightFields.style.display = type === 'flights' ? 'block' : 'none';
+        hotelFields.style.display = type === 'hotels' ? 'block' : 'none';
+        carFields.style.display = type === 'cars' ? 'block' : 'none';
+    });
+
+    const mockData = {
+        flights: [
+            { id: 1, name: 'Qatar Airways', from: 'Chennai', destination: 'New York', date: '2024-07-01', passengers: 3 },
+            { id: 2, name: 'Emirates', from: 'Chennai', destination: 'New York', date: '2024-07-01', passengers: 3 },
+            { id: 3, name: 'Etihad', from: 'Chennai', destination: 'New York', date: '2024-07-01', passengers: 3 },
+            { id: 4, name: 'Air India', from: 'Chennai', destination: 'New York', date: '2024-07-01', passengers: 3 },
+            { id: 5, name: 'Air Arabia', from: 'Chennai', destination: 'New York', date: '2024-07-01', passengers: 3 },
+            { id: 6, name: 'Vistara', from: 'Chennai', destination: 'New York', date: '2024-07-01', passengers: 3 },
+        ],
+        hotels: [
+            { id: 1, name: 'Hotel A', destination: 'New York', checkIn: '2024-07-01', checkOut: '2024-07-05', guests: 2 },
+            { id: 2, name: 'Hotel B', destination: 'London', checkIn: '2024-07-02', checkOut: '2024-07-06', guests: 4 },
+        ],
+        cars: [
+            { id: 1, name: '4 seater', date: '2024-07-01', passengers: 4 },
+            { id: 2, name: '10 Seater', date: '2024-07-02', passengers: 10 },
+        ]
+    };
+
+    let selectedService = null;
+
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const type = searchType.value;
+        let results = [];
+
+        if (type === 'flights') {
+            const destination = document.getElementById('flightDestination').value;
+            const date = document.getElementById('flightDate').value;
+            const passengers = document.getElementById('passengerCount').value;
+
+            results = mockData.flights.filter(item => {
+                return (destination ? item.destination.toLowerCase().includes(destination.toLowerCase()) : true) &&
+                       item.date === date;
+            });
+        } else if (type === 'hotels') {
+            const destination = document.getElementById('hotelDestination').value;
+            const checkIn = document.getElementById('checkInDate').value;
+            const checkOut = document.getElementById('checkOutDate').value;
+            const guests = document.getElementById('hotelGuests').value;
+
+            results = mockData.hotels.filter(item => {
+                return (destination ? item.destination.toLowerCase().includes(destination.toLowerCase()) : true) &&
+                       item.checkIn === checkIn &&
+                       item.checkOut === checkOut &&
+                       (!guests || item.guests >= guests);
+            });
+        } else if (type === 'cars') {
+            const destination = document.getElementById('carDestination').value;
+            const date = document.getElementById('carDate').value;
+
+            results = mockData.cars.filter(item => {
+                return item.date === date;
+            });
+        }
+
+        displayResults(results);
+    });
+
+    function displayResults(results) {
+        searchResults.innerHTML = '';
+        if (results.length === 0) {
+            searchResults.innerHTML = '<li>No results found</li>';
+        } else {
+            results.forEach(result => {
+                const li = document.createElement('li');
+                li.textContent = `${result.name}`;
+                li.addEventListener('click', () => selectService(result));
+                searchResults.appendChild(li);
+            });
+        }
+    }
+
+    function selectService(service) {
+        selectedService = service;
+        bookingDetails.innerHTML = `
+            <p>Service: ${service.name}</p>
+            <p>Destination: ${service.destination}</p>
+            <p>${service.date ? `Date: ${service.date}` : `Check-in: ${service.checkIn} - Check-out: ${service.checkOut}`}</p>
+        `;
+        bookingSection.style.display = 'block';
+    }
+
+    confirmBooking.addEventListener('click', () => {
+        if (selectedService) {
+            alert(`Booking confirmed for ${selectedService.name}`);
+            bookingSection.style.display = 'none';
+            searchResults.innerHTML = '';
+            selectedService = null;
+        }
+    });
+});
+</script>
+</body>
+</html>
